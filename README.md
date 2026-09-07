@@ -1,45 +1,40 @@
 # hermes-bots-mod
 
-A fork of the bundled **Bots** plugin for the [Hermes](https://hermes-agent.nousresearch.com) desktop app, rebuilt as a hot-reloadable disk plugin.
-
-Bot Mode roster personality, fused with the sessions list. Each bot renders as a single card: avatar + name centered, online status dot pinned right (live working/idle/needs-input states), and that bot's chat sessions listed inside the box.
+A local-first fork of the bundled Bots plugin for the [Hermes desktop app](https://hermes-agent.nousresearch.com).
 
 ## Features
 
-- **Bot cards, not bot rows + detached session lists** — avatar, name, and status dot as one centered unit; sessions live inside the same bordered card
-- **Live online status dot** — the SDK `SessionStatusDot` fed the bot's *actually-active* session (most recent of canonical/last session), so it lights up while the bot works, shows needs-input / unread / background states
-- **Session list that behaves**:
-  - 3s poll + refetch-on-focus (was 10s), so archived sessions disappear promptly
-  - Opening a session immediately invalidates the list cache
-  - Sessions **reorder on activity** — message-count bumps float a session to the top
-  - Coarse elapsed timer per session (age) instead of a bare message count
-  - Open session gets its own accent ring + bold text
-- **No auto-kickoff on click** — clicking a bot opens its thread silently; the "Hey, tell me about yourself!" greeting only fires on genuine first creation of a bot with an empty session
+- Always-expanded bot sections without bordered cards or disclosure controls.
+- Centered bot avatar and name; a separate options button.
+- Click a bot name to open its canonical Bot Chat, or select an individual session below it.
+- Session switching updates the selected bot and workspace before hydration, preserving remote routing.
+- Canonical titles stay intact; sessions sort by recorded last activity.
+- Session status indicators and elapsed-time labels.
+- Existing bot settings, groups and backend safety behavior retained.
+
+This release uses a custom Sessions-style row. The experimental copied native Sessions renderer and its hover marquee are **not included**.
 
 ## Install
 
-1. Copy `plugin.js` into your Hermes desktop plugins dir:
+Copy `plugin.js` to `$HERMES_HOME/desktop-plugins/bots-mod/plugin.js` (normally `~/.hermes/desktop-plugins/bots-mod/plugin.js`). Back up the previous file first. If the destination is a managed symlink, replace the local link rather than writing through it.
 
-   ```bash
-   mkdir -p ~/.hermes/desktop-plugins/bots-mod
-   cp plugin.js ~/.hermes/desktop-plugins/bots-mod/plugin.js
-   ```
+The desktop app normally hot-reloads the plugin. Otherwise use the command palette → **Reload desktop plugins**. Disable the bundled Bots plugin in Settings → Plugins to avoid duplicate panes.
 
-2. In the Hermes desktop app: **⌘K → Reload desktop plugins** (or restart the app).
+NixOS/Home Manager activation may restore its packaged plugin. Update your declarative package separately to retain this version across switches.
 
-3. **Disable the bundled Bots plugin** in Settings → Plugins. Two copies registering the same panes double-render.
+## Verification
 
-## Requirements
+Requires Node.js for the regression suite:
 
-- Hermes desktop app (plugin SDK with `SessionStatusDot`, React Query doors — tested against desktop 0.17.0)
-- Gateway that supports `session.list` / `session.create` / `prompt.submit` profile-scoped RPCs (bot-mode protocol)
+```sh
+node --check plugin.js
+node roster.test.mjs plugin.js
+```
 
-## Notes
+Six roster regressions cover titles, activity ordering, remote ownership, cross-bot switching, always-expanded sections, and centered bot-name navigation. Backend safety regressions were also run against the release artifact locally. Live behavior is version-dependent; tested locally with Hermes desktop 0.17.0.
 
-- The file is a plain-ESM esbuild bundle of the bundled `hermes-bots` plugin fork; only `@hermes/plugin-sdk`, `react`, `react/jsx-runtime` are external.
-- Built for personal use — tested on a split desktop/gateway (finix) setup. YMMV on other versions; the plugin hot-reloads, so tweaking is cheap.
-- Bot appearance data (avatars, pins, groups) is read/written under the same `ui_meta['hermes-bots']` keys as the bundled plugin, so swapping back and forth won't lose your setup.
+Only `@hermes/plugin-sdk`, `react`, and `react/jsx-runtime` are external dependencies of the plugin bundle.
 
 ## License
 
-MIT
+MIT; retains the upstream Hermes-derived plugin code.
