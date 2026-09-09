@@ -4,7 +4,12 @@ A local-first fork of the bundled Bots plugin for the [Hermes desktop app](https
 
 ## Features
 
-- Always-expanded bot sections without bordered cards or disclosure controls.
+- Compact centered shelf of 60px square tiles for bots without visible chats, with 30px avatars and names.
+- Full-width expanded sections for bots with visible chats; matching 30px inline avatars.
+- One global internal-chat visibility toggle immediately left of the notification bell.
+- Canonical Bot Chat threads hidden by default, with direct access through each bot menu.
+- Archive-next navigation excludes internal chats while they are hidden.
+- No unsolicited greeting when opening a bot conversation.
 - Centered bot avatar and name; a separate options button.
 - Click a bot name to open its canonical Bot Chat, or select an individual session below it.
 - Session switching updates the selected bot and workspace before hydration, preserving remote routing.
@@ -29,9 +34,12 @@ Requires Node.js for the regression suite:
 ```sh
 node --check plugin.js
 node roster.test.mjs plugin.js
+node shelf.test.mjs plugin.js
+# Optional real Chromium layout check (chromium on PATH):
+python3 layout.test.py
 ```
 
-Six roster regressions cover titles, activity ordering, remote ownership, cross-bot switching, always-expanded sections, and centered bot-name navigation. Backend safety regressions were also run against the release artifact locally. Live behavior is version-dependent; tested locally with Hermes desktop 0.17.0.
+Regression suites cover titles, activity ordering, remote ownership, cross-bot switching, global internal visibility, compact eligibility, avatar sizes and navigation. The Chromium fixture checks square sizing, centering, wrapping and full-width expansion with an enlarged root font and conflicting container styles. It is not a substitute for visual verification in the running desktop. The approved layout was iterated in the desktop before publication.
 
 Only `@hermes/plugin-sdk`, `react`, and `react/jsx-runtime` are external dependencies of the plugin bundle.
 

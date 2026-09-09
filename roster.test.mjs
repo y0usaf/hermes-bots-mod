@@ -24,7 +24,9 @@ function harness(){
  });
  vm.runInContext(segment('function botsModSessionLabel(','function rc('),ctx);
  vm.runInContext(segment('var bp=','var wp='),ctx);
- vm.runInContext(segment('const botsModLifecycleCss=','function yc('),ctx);
+ ctx.botsModShowInternal=atom(false);ctx.botsModCompactCss='';ctx.botsModArchiveEffect=()=>{};
+ vm.runInContext(segment('function botsModIsInternalSession','import{CHAT_EMPTY_AREA'),ctx);
+ vm.runInContext(segment('const botsModLifecycleCss=','function yc(').replace(/import \{useEffect as botsModArchiveEffect\} from 'react';/,''),ctx);
  const walk=n=>n&&typeof n==='object'?[n,...[n.props?.children].flat(Infinity).flatMap(walk)]:[];
  const render=()=>walk(ctx.hc({bot,onDelete:()=>{},onEdit:()=>{},onGroup:()=>{}}));
  return {ctx,bot,rows,state,opened,canon,render};
@@ -54,6 +56,7 @@ test('session navigation preserves remote owner and canonical resolved selection
  assert.equal(h.render().filter(n=>n.props?.['aria-current']==='page').length,0);
  h.state.focusedSessionOwner.set({connectionId:'remote',profile:'worker'});
  assert.equal(h.render().filter(n=>n.props?.['aria-current']==='page').length,1);
+ h.ctx.botsModShowInternal.set(true);
  h.rows[0].resolved_id='tip';h.state.focusedStoredSessionId.set('tip');
  assert.equal(h.render().filter(n=>n.props?.['aria-current']==='page').length,1);
 });
@@ -73,7 +76,7 @@ test('agent sections stay expanded and have no disclosure controls',()=>{
  const h=harness(),tree=h.render();
  assert.equal(tree.filter(n=>n.props?.['aria-expanded']!==undefined).length,0);
  assert.equal(tree.filter(n=>n.type==='caret').length,0);
- assert.equal(tree.filter(n=>n.type==='status').length,2);
+ assert.equal(tree.filter(n=>n.type==='status').length,1);
 });
 test('bot name opens canonical chat; options use a separate button, without a card',async()=>{
  const h=harness(),tree=h.render();
