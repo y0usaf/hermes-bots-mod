@@ -4,13 +4,14 @@ A local-first fork of the bundled Bots plugin for the [Hermes desktop app](https
 
 ## Features
 
-- Compact centered shelf of 60px square tiles for bots without visible chats, with 30px avatars and names.
-- Full-width expanded sections for bots with visible chats; matching 30px inline avatars.
+- Compact left-aligned shelf of 56px square tiles for bots without visible chats, with 26px avatars and names; transparent at rest with a themed hover/focus highlight (`--chrome-action-hover`).
+- Full-width expanded sections for bots with visible chats; matching 22px inline avatars aligned to the session-row left edge.
 - One global internal-chat visibility toggle immediately left of the notification bell.
 - Canonical Bot Chat threads hidden by default, with direct access through each bot menu.
 - Archive-next navigation excludes internal chats while they are hidden.
 - No unsolicited greeting when opening a bot conversation.
 - Centered bot avatar and name; a separate options button.
+- Session status indicators and elapsed-time labels with tabular-numeric timestamps.
 - Click a bot name to open its canonical Bot Chat, or select an individual session below it.
 - Session switching updates the selected bot and workspace before hydration, preserving remote routing.
 - Canonical titles stay intact; sessions sort by recorded last activity.
@@ -39,7 +40,7 @@ node shelf.test.mjs plugin.js
 python3 layout.test.py
 ```
 
-Regression suites cover titles, activity ordering, remote ownership, cross-bot switching, global internal visibility, compact eligibility, avatar sizes and navigation. The Chromium fixture checks square sizing, centering, wrapping and full-width expansion with an enlarged root font and conflicting container styles. It is not a substitute for visual verification in the running desktop. The approved layout was iterated in the desktop before publication.
+Regression suites cover titles, activity ordering, remote ownership, cross-bot switching, global internal visibility, compact eligibility, avatar sizes and navigation. The Chromium fixture checks square 56px tiles, left alignment, transparent-at-rest compact tiles with themed hover/focus highlight, wrapping at narrow widths and full-width expansion with an enlarged root font and conflicting container styles. Real `:hover` can be driven headlessly via CDP, though this `--dump-dom` fixture does not do so: it only asserts the hover rule exists and exercises the `:focus-within` path live. It is not a substitute for visual verification in the running desktop. The approved layout was iterated in the desktop before publication.
 
 Only `@hermes/plugin-sdk`, `react`, and `react/jsx-runtime` are external dependencies of the plugin bundle.
 
