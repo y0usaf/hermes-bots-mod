@@ -25,6 +25,9 @@ function harness(){
  vm.runInContext(segment('function botsModSessionLabel(','function rc('),ctx);
  vm.runInContext(segment('var bp=','var wp='),ctx);
  ctx.botsModShowInternal=atom(false);ctx.botsModCompactCss='';ctx.botsModArchiveEffect=()=>{};
+ ctx.botsModHiddenBots=atom({});ctx.botsModHiddenName=bot=>`${bot?.connectionId||'local'}::${bot?.name||'default'}`;
+ ctx.botsModIsHidden=(bot,meta)=>!!ctx.botsModHiddenBots.get()[ctx.botsModHiddenName(bot)]||!!(meta||{}).hidden;
+ ctx.botsModSetHidden=(bot,hide)=>{const k=ctx.botsModHiddenName(bot),next={...ctx.botsModHiddenBots.get()};hide?next[k]={name:bot.name,connectionId:bot.connectionId,title:bot.name,at:Date.now()}:delete next[k];ctx.botsModHiddenBots.set(next);};
  vm.runInContext(segment('function botsModIsInternalSession','import{CHAT_EMPTY_AREA'),ctx);
  vm.runInContext(segment('const botsModLifecycleCss=','function yc(').replace(/import \{useEffect as botsModArchiveEffect\} from 'react';/,''),ctx);
  const walk=n=>n&&typeof n==='object'?[n,...[n.props?.children].flat(Infinity).flatMap(walk)]:[];
